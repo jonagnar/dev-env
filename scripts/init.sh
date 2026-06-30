@@ -139,7 +139,9 @@ invoke_init() {
 
 _init_mise_install() {
     local root="$1"
-    MISE_GLOBAL_CONFIG_FILE="$root/.config/mise/config.toml" run_native mise install
+    local cfg="$root/.config/mise/config.toml"
+    MISE_GLOBAL_CONFIG_FILE="$cfg" run_native mise trust "$cfg"
+    MISE_GLOBAL_CONFIG_FILE="$cfg" run_native mise install
 }
 
 _init_chezmoi() {

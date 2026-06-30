@@ -57,7 +57,9 @@ function Invoke-Init {
         Invoke-Native -File 'scoop' -Arguments @('install', 'git', 'mise')
     }
     Invoke-Step -Name "mise install core (sops age chezmoi gitleaks)" -Action {
-        $env:MISE_GLOBAL_CONFIG_FILE = Join-Path $root '.config/mise/config.toml'
+        $cfg = Join-Path $root '.config/mise/config.toml'
+        $env:MISE_GLOBAL_CONFIG_FILE = $cfg
+        Invoke-Native -File 'mise' -Arguments @('trust', $cfg)
         Invoke-Native -File 'mise' -Arguments @('install')
     }
     # Put the just-installed mise tools on PATH for the rest of THIS process —
