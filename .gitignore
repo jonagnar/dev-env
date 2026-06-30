@@ -1,0 +1,21 @@
+# secrets — never commit plaintext or private keys
+*.key
+keys.txt
+*.dec
+.env
+!.env.example
+*.env
+!*.env.sops
+!*.env.example
+
+# gitignored holding folders (keep the folder, drop the contents)
+ops/*
+!ops/.gitkeep
+tools/bin/*
+!tools/bin/.gitkeep
+backups/*
+!backups/.gitkeep
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
