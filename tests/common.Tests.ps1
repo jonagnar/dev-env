@@ -28,3 +28,38 @@ Describe "Invoke-Step (dry-run)" {
         $ran | Should -BeTrue
     }
 }
+
+Describe "Confirm-Action" {
+    It "returns true without prompting when AssumeYes is set" {
+        $script:AssumeYes = $true
+        Confirm-Action -Message "overwrite?" | Should -BeTrue
+    }
+    It "returns false under dry-run without prompting" {
+        $script:AssumeYes = $false
+        $script:DryRun = $true
+        Confirm-Action -Message "overwrite?" | Should -BeFalse
+        $script:DryRun = $false
+    }
+}
+
+Describe "Checklist" {
+    It "summarizes failures and returns exit code 1 when a check fails" {
+        Reset-Checks
+        Add-Check -Name "key present" -Ok $true
+        Add-Check -Name "tools installed" -Ok $false -Detail "mise missing"
+        Write-CheckSummary | Should -Be 1
+    }
+    It "returns exit code 0 when all checks pass" {
+        Reset-Checks
+        Add-Check -Name "key present" -Ok $true
+        Write-CheckSummary | Should -Be 0
+    }
+}
+
+Describe "Get-DevRoot" {
+    It "resolves the repo root (parent of scripts/)" {
+        $expected = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot ".."))
+        $actual   = [System.IO.Path]::GetFullPath((Get-DevRoot))
+        $actual | Should -Be $expected
+    }
+}
