@@ -60,6 +60,13 @@ function Invoke-Init {
         $env:MISE_GLOBAL_CONFIG_FILE = Join-Path $root '.config/mise/config.toml'
         Invoke-Native -File 'mise' -Arguments @('install')
     }
+    # Put the just-installed mise tools on PATH for the rest of THIS process —
+    # chezmoi (Phase 3), age-keygen (Phase 4) and verify (Phase 6) run here,
+    # before any new shell activates mise.
+    if (-not $script:DryRun -and (Get-Command mise -ErrorAction SilentlyContinue)) {
+        $env:MISE_GLOBAL_CONFIG_FILE = Join-Path $root '.config/mise/config.toml'
+        try { mise env -s pwsh | Out-String | Invoke-Expression } catch { }
+    }
 
     Write-Phase "Phase 2 — Skeleton"
     foreach ($d in @('ops', 'tools/bin', 'backups')) {

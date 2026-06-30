@@ -105,6 +105,12 @@ invoke_init() {
         info "mise already present."
     fi
     step "mise install core (sops age chezmoi gitleaks)" _init_mise_install "$root" || return 1
+    # Put the just-installed mise tools on PATH for the rest of THIS process —
+    # chezmoi (Phase 3), age-keygen (Phase 4) and verify (Phase 6) run here,
+    # before any new shell activates mise.
+    if [[ "${DRY_RUN:-0}" -ne 1 ]] && command -v mise >/dev/null 2>&1; then
+        eval "$(MISE_GLOBAL_CONFIG_FILE="$root/.config/mise/config.toml" mise env -s bash 2>/dev/null)" || true
+    fi
 
     phase "Phase 2 — Skeleton"
     local d
