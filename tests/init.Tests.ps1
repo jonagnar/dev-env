@@ -29,4 +29,10 @@ Describe "Invoke-Init" {
         Mock Test-Admin { $false }
         { Invoke-Init -Yes } | Should -Throw "*administrator*"
     }
+
+    It "previews without throwing under -WhatIf even when not admin" {
+        Mock Test-Admin { $false }
+        { Invoke-Init -WhatIf } | Should -Not -Throw
+        Should -Invoke Invoke-Native -Times 0
+    }
 }

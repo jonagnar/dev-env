@@ -44,7 +44,8 @@ function Invoke-Init {
 
     Write-Phase "Phase 0 — Preflight"
     if (-not (Test-Admin)) {
-        throw "init must run as administrator. Re-open your terminal with 'Run as administrator' and try again."
+        $msg = "init must run as administrator. Re-open your terminal with 'Run as administrator' and try again."
+        if ($script:DryRun) { Write-Warn $msg } else { throw $msg }
     }
     $distro = Get-WslDistro
     if ($distro) { Write-Info "WSL distro detected: $distro" } else { Write-Warn "No WSL distro found (ok for Windows-only use)." }
