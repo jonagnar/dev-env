@@ -15,6 +15,7 @@ Describe "Invoke-Native" {
 }
 
 Describe "Invoke-Step (dry-run)" {
+    BeforeEach { $script:DryRun = $false; $script:AssumeYes = $false }
     It "skips the action when DryRun is set" {
         $script:DryRun = $true
         $ran = $false
@@ -27,9 +28,17 @@ Describe "Invoke-Step (dry-run)" {
         Invoke-Step -Name "do thing" -Action { $script:ran = $true }
         $ran | Should -BeTrue
     }
+    It "runs -Always steps even under dry-run" {
+        $script:DryRun = $true
+        $script:ran = $false
+        Invoke-Step -Name "read-only" -Action { $script:ran = $true } -Always
+        $ran | Should -BeTrue
+        $script:DryRun = $false
+    }
 }
 
 Describe "Confirm-Action" {
+    BeforeEach { $script:DryRun = $false; $script:AssumeYes = $false }
     It "returns true without prompting when AssumeYes is set" {
         $script:AssumeYes = $true
         Confirm-Action -Message "overwrite?" | Should -BeTrue
@@ -61,5 +70,11 @@ Describe "Get-DevRoot" {
         $expected = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot ".."))
         $actual   = [System.IO.Path]::GetFullPath((Get-DevRoot))
         $actual | Should -Be $expected
+    }
+}
+
+Describe "Get-AgeKeyPath" {
+    It "returns a path under HOME" {
+        Get-AgeKeyPath | Should -BeLike "$HOME*"
     }
 }

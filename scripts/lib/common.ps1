@@ -31,6 +31,8 @@ function Invoke-Step {
         return
     }
     Write-Host ("  -> {0}" -f $Name) -ForegroundColor Cyan
+    # Callers must use Invoke-Native (not bare &) inside $Action so non-zero
+    # exit codes surface as exceptions.
     & $Action
 }
 
