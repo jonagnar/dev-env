@@ -33,16 +33,23 @@ ensure_mise() {
 new_dev_age_key() {
     local key_path="$1" sops_tmpl="$2" sops_config="$3"
     local dir; dir="$(dirname "$key_path")"
-    ensure_dir "$dir"
-    chmod 700 "$dir" 2>/dev/null || true
-    if [[ ! -f "$key_path" ]]; then
-        run_native age-keygen -o "$key_path" || return 1
-    fi
-    chmod 600 "$key_path" 2>/dev/null || true
-    local pub
-    pub="$(run_native age-keygen -y "$key_path")" || return 1
-    pub="${pub//[$'\r\n']/}"
-    sed "s|REPLACE_WITH_AGE_PUBLIC_KEY|$pub|" "$sops_tmpl" > "$sops_config"
+    # umask 077 in a subshell so every dir/file created here is private from
+    # birth (don't rely on age-keygen's default mode or the inherited umask).
+    # NOTE: no `local` inside the subshell — `local` is only valid in a function
+    # body, and a ( ) subshell is not one; `pub` is a plain var here.
+    (
+        umask 077
+        ensure_dir "$dir"
+        chmod 700 "$dir" 2>/dev/null || warn "could not chmod 700 $dir"
+        if [[ ! -f "$key_path" ]]; then
+            run_native age-keygen -o "$key_path" || exit 1
+        fi
+        chmod 600 "$key_path" 2>/dev/null || warn "could not chmod 600 $key_path"
+        pub="$(run_native age-keygen -y "$key_path")" || exit 1
+        pub="${pub//[$'\r\n']/}"
+        ensure_dir "$(dirname "$sops_config")"
+        sed "s|REPLACE_WITH_AGE_PUBLIC_KEY|$pub|" "$sops_tmpl" > "$sops_config"
+    ) || return 1
 }
 
 # Register a systemd --user daily backup timer (Persistent for catch-up).
@@ -61,7 +68,7 @@ Description=dev-environment encrypted backup
 
 [Service]
 Type=oneshot
-ExecStart=$root/scripts/backup.sh --yes
+ExecStart="${root}/scripts/backup.sh" --yes
 EOF
     cat > "$unit_dir/devenv-backup.timer" <<'EOF'
 [Unit]
