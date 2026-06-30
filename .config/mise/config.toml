@@ -1,0 +1,9 @@
+# .config/mise/config.toml — machine-global tool list (source of truth).
+# git + mise are installed by the scoop bootstrap; everything here is the
+# minimal CORE the framework's own machinery depends on. Add your own tools
+# with `mise use -g <tool>` — do not bloat this file.
+[tools]
+sops     = "latest"
+age      = "latest"
+chezmoi  = "latest"
+gitleaks = "latest"

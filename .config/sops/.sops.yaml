@@ -1,0 +1,6 @@
+# .config/sops/.sops.yaml — age recipient(s) allowed to decrypt this repo's
+# secrets. `init` writes this machine's PUBLIC key into `age:` below.
+# Add teammate / CI public keys here (comma-separated) for multi-recipient.
+creation_rules:
+  - path_regex: \.env\.sops$
+    age: "REPLACE_WITH_AGE_PUBLIC_KEY"
