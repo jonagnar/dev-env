@@ -16,7 +16,6 @@ ops/*
 !ops/.gitkeep
 tools/bin/*
 !tools/bin/.gitkeep
-tools/md2pdf/.venv/
 backups/*
 !backups/.gitkeep
 
