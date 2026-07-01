@@ -35,6 +35,11 @@ assert_contains "$repos" "$WORK/root" "discovers meta-repo"
 assert_contains "$repos" "proj-a" "discovers ops/proj-a (has .git)"
 assert_not_contains "$repos" "not-a-repo" "skips ops/not-a-repo (no .git)"
 
+# infra/ is discovered when it is itself a repo (the Infra clone)
+mkdir -p "$WORK/root/infra/.git"
+repos_infra="$(get_dev_repos "$WORK/root")"
+assert_contains "$repos_infra" "$WORK/root/infra" "discovers infra/ when it is a repo"
+
 # get_backup_recipients: parses age: line from a .sops.yaml
 mkdir -p "$WORK/root/.config/sops"
 cat > "$WORK/root/.config/sops/.sops.yaml" <<'YAML'

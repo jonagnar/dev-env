@@ -114,7 +114,7 @@ invoke_init() {
 
     phase "Phase 2 — Skeleton"
     local d
-    for d in ops tools/bin backups; do
+    for d in ops tools/bin backups infra; do
         step "ensure $d/" ensure_dir "$root/$d" || return 1
     done
 

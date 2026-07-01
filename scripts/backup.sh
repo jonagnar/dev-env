@@ -16,6 +16,17 @@ get_dev_repos() {
             [[ -d "${d%/}/.git" ]] && printf '%s\n' "${d%/}"
         done
     fi
+    # infra/: either the Infra clone itself, or a container of infra repos.
+    if [[ -d "$root/infra" ]]; then
+        if [[ -d "$root/infra/.git" ]]; then
+            printf '%s\n' "$root/infra"
+        else
+            local i
+            for i in "$root/infra"/*/; do
+                [[ -d "${i%/}/.git" ]] && printf '%s\n' "${i%/}"
+            done
+        fi
+    fi
     return 0
 }
 

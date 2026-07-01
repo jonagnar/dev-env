@@ -4,8 +4,10 @@ This is a self-contained dev-environment meta-repo. One clone = the whole contex
 
 ## Layout
 - `scripts/` — the tool. Five verbs (`init`, `verify`, `update`, `backup`, `restore`),
-  each a `.ps1` (built) + `.sh` (scaffold), sharing `scripts/lib/common.ps1`.
+  each a `.ps1` (Windows) + `.sh` (Linux/WSL) port, sharing `scripts/lib/common.*`.
 - `ops/` — your cloned project repos (gitignored).
+- `infra/` — homelab infra-as-code, cloned from `WAAAGH/Infra` (gitignored, peer to `ops/`);
+  compose stacks + configs, secrets as `*.env.sops`; live Docker volumes/data stay out of the repo.
 - `tools/` — `bin/` on PATH (gitignored); `manifest.md` documents GUI apps.
 - `backups/` — age-encrypted snapshots (gitignored).
 - `.config/` — machinery: `mise/core.toml` (core tools), `sops/.sops.yaml`

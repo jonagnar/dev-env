@@ -97,7 +97,7 @@ function Invoke-Init {
     }
 
     Write-Phase "Phase 2 — Skeleton"
-    foreach ($d in @('ops', 'tools/bin', 'backups')) {
+    foreach ($d in @('ops', 'tools/bin', 'backups', 'infra')) {
         Invoke-Step -Name "ensure $d/" -Action {
             $p = Join-Path $root $d
             if (-not (Test-Path $p)) { New-Item -ItemType Directory -Force -Path $p | Out-Null }

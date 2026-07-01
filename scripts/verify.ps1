@@ -15,7 +15,7 @@ function Invoke-Verify {
     $keyPath = Get-AgeKeyPath
     Add-Check -Name "age key present" -Ok (Test-Path $keyPath) -Detail "$keyPath missing — run init"
 
-    foreach ($d in @('ops', 'tools/bin', 'backups')) {
+    foreach ($d in @('ops', 'tools/bin', 'backups', 'infra')) {
         Add-Check -Name "folder: $d" -Ok (Test-Path (Join-Path $root $d)) -Detail "missing"
     }
 

@@ -51,4 +51,10 @@ Describe "Get-DevRepos" {
         ($repos | Where-Object { $_ -like "*proj-a" }) | Should -Not -BeNullOrEmpty
         ($repos | Where-Object { $_ -like "*not-a-repo" }) | Should -BeNullOrEmpty
     }
+    It "discovers infra/ when it is itself a repo" {
+        New-Item -ItemType Directory -Force -Path "$TestDrive/.git" | Out-Null
+        New-Item -ItemType Directory -Force -Path "$TestDrive/infra/.git" | Out-Null
+        $repos = Get-DevRepos -Root $TestDrive
+        ($repos | Where-Object { $_ -like "*infra" }) | Should -Not -BeNullOrEmpty
+    }
 }
