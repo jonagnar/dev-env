@@ -19,7 +19,7 @@ function Invoke-Update {
 
     if (Confirm-Action -Message "Update installed tools (scoop + mise)?") {
         Invoke-Step -Name "reconcile mise tools" -Action {
-            $env:MISE_GLOBAL_CONFIG_FILE = Join-Path $root '.config/mise/config.toml'
+            $env:MISE_GLOBAL_CONFIG_FILE = Join-Path $root '.config/mise/core.toml'
             Invoke-Native -File 'mise' -Arguments @('install')
             Invoke-Native -File 'mise' -Arguments @('upgrade')
         }

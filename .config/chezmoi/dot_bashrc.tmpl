@@ -1,7 +1,7 @@
 # .config/chezmoi/dot_bashrc.tmpl
 # Managed by chezmoi — do not edit directly; edit the template.
 export DEV_ROOT="{{ .devRoot }}"
-export MISE_GLOBAL_CONFIG_FILE="$DEV_ROOT/.config/mise/config.toml"
+export MISE_GLOBAL_CONFIG_FILE="$DEV_ROOT/.config/mise/core.toml"
 export SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
 export PATH="$DEV_ROOT/tools/bin:$PATH"
 if command -v mise >/dev/null 2>&1; then

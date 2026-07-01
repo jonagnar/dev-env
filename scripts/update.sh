@@ -29,8 +29,8 @@ invoke_update() {
 
 _update_mise() {
     local root="$1"
-    MISE_GLOBAL_CONFIG_FILE="$root/.config/mise/config.toml" run_native mise install || return 1
-    MISE_GLOBAL_CONFIG_FILE="$root/.config/mise/config.toml" run_native mise upgrade || return 1
+    MISE_GLOBAL_CONFIG_FILE="$root/.config/mise/core.toml" run_native mise install || return 1
+    MISE_GLOBAL_CONFIG_FILE="$root/.config/mise/core.toml" run_native mise upgrade || return 1
 }
 
 _update_chezmoi() {

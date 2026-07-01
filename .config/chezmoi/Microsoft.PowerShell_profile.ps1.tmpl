@@ -1,7 +1,7 @@
 # .config/chezmoi/Microsoft.PowerShell_profile.ps1.tmpl
 # Managed by chezmoi — do not edit directly; edit the template.
 $env:DEV_ROOT = "{{ .devRoot }}"
-$env:MISE_GLOBAL_CONFIG_FILE = Join-Path $env:DEV_ROOT ".config/mise/config.toml"
+$env:MISE_GLOBAL_CONFIG_FILE = Join-Path $env:DEV_ROOT ".config/mise/core.toml"
 $env:SOPS_AGE_KEY_FILE = Join-Path $HOME ".config/sops/age/keys.txt"
 $env:PATH = (Join-Path $env:DEV_ROOT "tools/bin") + [IO.Path]::PathSeparator + $env:PATH
 if (Get-Command mise -ErrorAction SilentlyContinue) {

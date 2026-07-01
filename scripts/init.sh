@@ -109,7 +109,7 @@ invoke_init() {
     # chezmoi (Phase 3), age-keygen (Phase 4) and verify (Phase 6) run here,
     # before any new shell activates mise.
     if [[ "${DRY_RUN:-0}" -ne 1 ]] && command -v mise >/dev/null 2>&1; then
-        eval "$(MISE_GLOBAL_CONFIG_FILE="$root/.config/mise/config.toml" mise env -s bash 2>/dev/null)" || true
+        eval "$(MISE_GLOBAL_CONFIG_FILE="$root/.config/mise/core.toml" mise env -s bash 2>/dev/null)" || true
     fi
 
     phase "Phase 2 — Skeleton"
@@ -139,7 +139,7 @@ invoke_init() {
 
 _init_mise_install() {
     local root="$1"
-    local cfg="$root/.config/mise/config.toml"
+    local cfg="$root/.config/mise/core.toml"
     MISE_GLOBAL_CONFIG_FILE="$cfg" run_native mise trust "$cfg"
     MISE_GLOBAL_CONFIG_FILE="$cfg" run_native mise install
 }
