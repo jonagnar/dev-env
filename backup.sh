@@ -33,10 +33,11 @@ dev_root() { cd "$(dirname "${BASH_SOURCE[0]}")" && pwd; }
 
 # Destination preference: $DEV_BACKUP_DIR > ~/.config/dev/backup-dir > ~/backups.
 backup_dest() {
-    if [[ -n "${DEV_BACKUP_DIR:-}" ]]; then printf '%s\n' "$DEV_BACKUP_DIR"; return 0; fi
-    local pref="$HOME/.config/dev/backup-dir"
-    if [[ -f "$pref" ]]; then head -n1 "$pref"; return 0; fi
-    printf '%s/backups\n' "$HOME"
+    local dest=""
+    if [[ -n "${DEV_BACKUP_DIR:-}" ]]; then dest="$DEV_BACKUP_DIR"
+    elif [[ -f "$HOME/.config/dev/backup-dir" ]]; then dest="$(head -n1 "$HOME/.config/dev/backup-dir")"
+    else dest="$HOME/backups"; fi
+    printf '%s\n' "${dest/#\~/$HOME}"   # tolerate a hand-written ~/ in the pref
 }
 
 # age comes from mise; outside an interactive shell (cron, plain bash -c)
@@ -155,8 +156,8 @@ _backup_encrypt() {
         age_args+=(-o "$enc" "$tar_file")
         run_native age "${age_args[@]}" || rc=1
     fi
-    # Always shred the plaintext tar + staging, on success OR failure: the synced
-    # backup/ dir must never retain a plaintext archive (provider sees only ciphertext).
+    # Always shred the plaintext tar + staging, on success OR failure: the
+    # destination (often a synced folder) must never retain a plaintext archive.
     rm -f "$tar_file" 2>/dev/null || true
     rm -rf "$staging" 2>/dev/null || true
     return "$rc"

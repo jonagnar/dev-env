@@ -41,10 +41,11 @@ age_key_path() { printf '%s/.config/sops/age/keys.txt\n' "$HOME"; }
 
 # Destination preference: $DEV_BACKUP_DIR > ~/.config/dev/backup-dir > ~/backups.
 backup_dest() {
-    if [[ -n "${DEV_BACKUP_DIR:-}" ]]; then printf '%s\n' "$DEV_BACKUP_DIR"; return 0; fi
-    local pref="$HOME/.config/dev/backup-dir"
-    if [[ -f "$pref" ]]; then head -n1 "$pref"; return 0; fi
-    printf '%s/backups\n' "$HOME"
+    local dest=""
+    if [[ -n "${DEV_BACKUP_DIR:-}" ]]; then dest="$DEV_BACKUP_DIR"
+    elif [[ -f "$HOME/.config/dev/backup-dir" ]]; then dest="$(head -n1 "$HOME/.config/dev/backup-dir")"
+    else dest="$HOME/backups"; fi
+    printf '%s\n' "${dest/#\~/$HOME}"   # tolerate a hand-written ~/ in the pref
 }
 
 # age comes from mise; outside an interactive shell (cron, plain bash -c)

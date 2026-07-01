@@ -13,7 +13,7 @@ WSL/Linux (bash).
 | Script | Purpose |
 |--------|---------|
 | `./install.sh` | provision/refresh this machine |
-| `./backup.sh` | age-encrypted snapshot → `backup/` (manual — run it when you want one) |
+| `./backup.sh` | age-encrypted snapshot → your chosen destination (manual — run it when you want one) |
 | `./restore.sh` | decrypt + staged restore |
 
 All support `--help` and `--dry-run`; `restore` prompts unless `--yes`.
@@ -93,7 +93,9 @@ ciphertext, so the provider only ever sees ciphertext.
 1. Install git + age; clone this repo.
 2. Restore your age **private** key from Vaultwarden/Bitwarden to
    `~/.config/sops/age/keys.txt`.
-3. `./restore.sh` (or, before scripts exist:
-   `age -d -i ~/.config/sops/age/keys.txt backup/<archive>.tar.age | tar -x`).
-4. `git clone` each `*.bundle` from the staging dir to rebuild repos.
-5. `./install.sh` to finish provisioning.
+3. Fetch the newest `dev-backup-*.tar.age` from your sync provider (Proton
+   Drive web/app) onto disk — a fresh machine has no saved destination yet.
+4. `./restore.sh --archive <path/to/that.tar.age>` (or, before scripts exist:
+   `age -d -i ~/.config/sops/age/keys.txt <archive>.tar.age | tar -x`).
+5. `git clone` each `*.bundle` from the staging dir to rebuild repos.
+6. `./install.sh` to finish provisioning.
