@@ -53,15 +53,26 @@ function Invoke-Backup {
         Invoke-Native -File 'tar' -Arguments @('-cf', $tar, '-C', $staging, '.')
     }
     Invoke-Step -Name "age-encrypt + clean up" -Action {
-        $recipients = Get-BackupRecipients -Root $root
-        $ageArgs = @()
-        foreach ($r in $recipients) { $ageArgs += @('-r', $r) }
-        $ageArgs += @('-o', $enc, $tar)
-        Invoke-Native -File 'age' -Arguments $ageArgs
-        Remove-Item $tar -Force -ErrorAction SilentlyContinue
-        Remove-Item $staging -Recurse -Force -ErrorAction SilentlyContinue
+        try {
+            $recipients = Get-BackupRecipients -Root $root
+            if (-not $recipients) { throw ".sops.yaml has no age recipient — refusing to leave plaintext behind." }
+            $ageArgs = @()
+            foreach ($r in $recipients) { $ageArgs += @('-r', $r) }
+            $ageArgs += @('-o', $enc, $tar)
+            Invoke-Native -File 'age' -Arguments $ageArgs
+        } finally {
+            # Always shred the plaintext tar + staging, on success OR failure:
+            # the synced backups/ dir must never retain a plaintext archive
+            # (the repo's headline invariant is "provider only sees ciphertext").
+            Remove-Item $tar -Force -ErrorAction SilentlyContinue
+            Remove-Item $staging -Recurse -Force -ErrorAction SilentlyContinue
+        }
     }
-    Write-Info "Backup written: $enc"
+    if ($script:DryRun) {
+        Write-Info "[dry-run] would write backup: $enc"
+    } else {
+        Write-Info "Backup written: $enc"
+    }
 }
 
 if ($Help) { Get-Help $PSCommandPath -Detailed; return }

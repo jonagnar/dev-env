@@ -65,7 +65,11 @@ invoke_backup() {
     step "tar staging" _backup_tar "$backup_dir" "$tar_file" "$staging" || return 1
     step "age-encrypt + clean up" _backup_encrypt "$root" "$enc" "$tar_file" "$staging" || return 1
 
-    info "Backup written: $enc"
+    if [[ "$DRY_RUN" == "1" ]]; then
+        info "[dry-run] would write backup: $enc"
+    else
+        info "Backup written: $enc"
+    fi
 }
 
 _backup_bundle() {
@@ -87,15 +91,25 @@ _backup_tar() {
 
 _backup_encrypt() {
     local root="$1" enc="$2" tar_file="$3" staging="$4"
+    local rc=0
     local -a age_args=()
     local r
     while IFS= read -r r; do
         [[ -n "$r" ]] && age_args+=(-r "$r")
     done < <(get_backup_recipients "$root")
-    age_args+=(-o "$enc" "$tar_file")
-    run_native age "${age_args[@]}" || return 1
+    if [[ ${#age_args[@]} -eq 0 ]]; then
+        err "No age recipients resolved — refusing to leave plaintext behind."
+        rc=1
+    else
+        age_args+=(-o "$enc" "$tar_file")
+        run_native age "${age_args[@]}" || rc=1
+    fi
+    # Always shred the plaintext tar + staging, on success OR failure: the
+    # synced backups/ dir must never retain a plaintext archive (the repo's
+    # headline invariant is that the provider only ever sees ciphertext).
     rm -f "$tar_file" 2>/dev/null || true
     rm -rf "$staging" 2>/dev/null || true
+    return "$rc"
 }
 
 main() {

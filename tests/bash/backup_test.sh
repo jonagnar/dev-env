@@ -46,5 +46,27 @@ recips="$(get_backup_recipients "$WORK/root")"
 assert_contains "$recips" "age1aaa" "parses first recipient"
 assert_contains "$recips" "age1bbb" "parses second recipient"
 
+# Security regression: a failed encrypt must NEVER leave a plaintext tar behind.
+# (Reload real _backup_encrypt in case earlier cases redefined seams.)
+source "$SELF_DIR/../../scripts/backup.sh"
+DRY_RUN=0; ASSUME_YES=1
+enc_dir="$WORK/encfail"; mkdir -p "$enc_dir/staging"
+plain_tar="$enc_dir/dev-backup-x.tar"
+
+# Case A: age (encrypt) fails -> plaintext tar is shredded, non-zero returned.
+: > "$plain_tar"
+get_backup_recipients() { printf 'age1fakeRecipient\n'; }
+run_native() { [[ "$1" == "age" ]] && return 1 || return 0; }
+_backup_encrypt "$WORK/root" "$plain_tar.age" "$plain_tar" "$enc_dir/staging"; rc=$?
+assert_false "$rc" "failed encrypt returns non-zero"
+assert_true "$([[ ! -f "$plain_tar" ]] && echo 0 || echo 1)" "no plaintext tar remains after failed encrypt"
+
+# Case B: no recipients resolved -> fail-closed, plaintext tar shredded.
+: > "$plain_tar"
+get_backup_recipients() { return 1; }
+_backup_encrypt "$WORK/root" "$plain_tar.age" "$plain_tar" "$enc_dir/staging"; rc=$?
+assert_false "$rc" "missing recipients returns non-zero"
+assert_true "$([[ ! -f "$plain_tar" ]] && echo 0 || echo 1)" "no plaintext tar remains when recipients missing"
+
 echo "backup_test: $((TESTS_RUN - TESTS_FAILED))/$TESTS_RUN passed"
 exit "$TESTS_FAILED"

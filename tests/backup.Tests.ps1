@@ -21,6 +21,26 @@ Describe "Invoke-Backup" {
     }
 }
 
+Describe "Invoke-Backup encryption failure" {
+    It "never leaves a plaintext tar in backups/ when encryption fails" {
+        $backupDir = Join-Path $TestDrive 'backups'
+        New-Item -ItemType Directory -Force -Path $backupDir | Out-Null
+        Mock Get-DevRepos { @("$TestDrive/meta") }
+        Mock Get-BackupRecipients { @('age1fakeRecipient') }
+        # bundle + tar succeed (tar writes a real plaintext archive); age throws.
+        Mock Invoke-Native {
+            if ($File -eq 'tar') {
+                $out = $Arguments | Where-Object { $_ -like '*.tar' } | Select-Object -First 1
+                Set-Content -Path $out -Value 'PLAINTEXT' -NoNewline
+                return
+            }
+            if ($File -eq 'age') { throw "encryption failed" }
+        }
+        { Invoke-Backup -Yes -BackupDir $backupDir } | Should -Throw
+        (Get-ChildItem $backupDir -Filter '*.tar' -File) | Should -BeNullOrEmpty
+    }
+}
+
 Describe "Get-DevRepos" {
     It "finds the meta-repo and git repos under ops/" {
         New-Item -ItemType Directory -Force -Path "$TestDrive/.git" | Out-Null
