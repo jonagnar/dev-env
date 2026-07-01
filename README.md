@@ -44,6 +44,7 @@ those formats, and bare `.env.*` stays gitignored as a plaintext footgun-guard.
 sops secrets/shared.env.json
 ```
 `cd` into the project → mise auto-activates → the vars are in your shell.
+(First visit to a repo: run `mise trust` — mise won't load an untrusted config.)
 Document variable *names* in a committed `.env.example`.
 
 **Multi-tenant** — per-customer secrets, zero code change:
