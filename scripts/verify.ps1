@@ -8,7 +8,7 @@ function Invoke-Verify {
     $root = Get-DevRoot
     Reset-Checks
 
-    foreach ($tool in @('git', 'mise', 'sops', 'age', 'chezmoi')) {
+    foreach ($tool in @('git', 'mise', 'sops', 'age', 'age-keygen', 'chezmoi', 'gitleaks')) {
         Add-Check -Name "tool: $tool" -Ok ([bool](Get-Command $tool -ErrorAction SilentlyContinue)) -Detail "not on PATH"
     }
 

@@ -19,4 +19,9 @@ Describe "Invoke-Restore" {
         Should -Invoke Invoke-Native -ParameterFilter { $File -eq 'age' -and $Arguments -contains '-d' }
         Should -Invoke Invoke-Native -ParameterFilter { $File -eq 'tar' -and $Arguments -contains '-xf' }
     }
+    It "warns without throwing under -WhatIf when there are no backups" {
+        Mock Get-LatestArchive { $null }
+        { Invoke-Restore -WhatIf } | Should -Not -Throw
+        Should -Invoke Invoke-Native -Times 0
+    }
 }

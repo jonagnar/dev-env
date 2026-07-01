@@ -17,7 +17,13 @@ function Invoke-Restore {
     $root = Get-DevRoot
     if (-not $BackupDir) { $BackupDir = Join-Path $root 'backups' }
     if (-not $Archive)   { $Archive = Get-LatestArchive -BackupDir $BackupDir }
-    if (-not $Archive)   { throw "No backups found in $BackupDir. Nothing to restore." }
+    if (-not $Archive) {
+        $msg = "No backups found in $BackupDir. Nothing to restore."
+        # Under a preview, surface this as a clean warning instead of a red
+        # stack trace (mirrors restore.sh, which prints a plain err line).
+        if ($script:DryRun) { Write-Warn $msg; return }
+        throw $msg
+    }
 
     $stamp = (Get-Date -Format 'yyyyMMdd-HHmmss')
     $staging = Join-Path $root "restore-$stamp"

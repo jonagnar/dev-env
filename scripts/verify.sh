@@ -24,7 +24,7 @@ invoke_verify() {
     reset_checks
 
     local tool
-    for tool in git mise sops age chezmoi; do
+    for tool in git mise sops age age-keygen chezmoi gitleaks; do
         if tool_present "$tool"; then add_check "tool: $tool" 0
         else add_check "tool: $tool" 1 "not on PATH"; fi
     done
