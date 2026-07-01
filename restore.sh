@@ -7,10 +7,6 @@
 DRY_RUN=0
 ASSUME_YES=0
 
-# age comes from mise; outside an interactive shell (cron, plain bash -c)
-# mise isn't activated — fall back to its shims.
-command -v age >/dev/null 2>&1 || export PATH="$HOME/.local/share/mise/shims:$PATH"
-
 info()  { printf '%s\n' "$*"; }
 warn()  { printf 'WARN: %s\n' "$*" >&2; }
 err()   { printf 'ERROR: %s\n' "$*" >&2; }
@@ -41,6 +37,15 @@ confirm() {
 
 dev_root()     { cd "$(dirname "${BASH_SOURCE[0]}")" && pwd; }
 age_key_path() { printf '%s/.config/sops/age/keys.txt\n' "$HOME"; }
+
+# age comes from mise; outside an interactive shell (cron, plain bash -c)
+# mise isn't activated and its shims can't pick a version without the repo's
+# core config. Wire both up if age isn't already resolvable.
+ensure_age() {
+    local root="$1"
+    export MISE_GLOBAL_CONFIG_FILE="${MISE_GLOBAL_CONFIG_FILE:-$root/.config/mise/core.toml}"
+    command -v age >/dev/null 2>&1 || export PATH="$HOME/.local/share/mise/shims:$PATH"
+}
 
 parse_common_flags() {
     REST_ARGS=()
@@ -76,6 +81,7 @@ invoke_restore() {
     done
 
     local root; root="$(dev_root)"
+    ensure_age "$root"
     [[ -n "$backup_dir" ]] || backup_dir="${DEV_BACKUP_DIR:-$root/backup}"
     [[ -n "$archive" ]] || archive="$(get_latest_archive "$backup_dir")"
     if [[ -z "$archive" ]]; then
