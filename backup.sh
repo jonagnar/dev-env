@@ -3,6 +3,9 @@
 # Never prompts (nothing destructive) — run it whenever you want a snapshot.
 #   ./backup.sh --dry-run
 #   ./backup.sh [--backup-dir DIR]
+# Default dir: $DEV_BACKUP_DIR if set, else <repo>/backup. Point it INTO your
+# sync app's local folder (e.g. Proton Drive on /mnt/c) — the archive is
+# ciphertext, so the synced copy is safe; sync apps can't watch WSL paths.
 
 DRY_RUN=0
 
@@ -81,7 +84,7 @@ invoke_backup() {
     done
 
     local root; root="$(dev_root)"
-    [[ -n "$backup_dir" ]] || backup_dir="$root/backup"
+    [[ -n "$backup_dir" ]] || backup_dir="${DEV_BACKUP_DIR:-$root/backup}"
 
     local stamp; stamp="$(date +%Y%m%d-%H%M%S)"
     local staging="${TMPDIR:-/tmp}/devbackup-$stamp"

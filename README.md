@@ -70,10 +70,19 @@ Off-boarding = remove the key + `updatekeys` again.
   mise-native is for your interactive/dev shell env.
 
 ## Backups
-`backup` writes `backup/dev-backup-<timestamp>.tar.age` — git bundles of the
-meta-repo + each `ops/<repo>` (including `ops/infra`), age-encrypted to your public
-key. **You** choose where to sync `backup/` — point Proton/Drive/Syncthing at it;
-encrypted at rest, the provider only ever sees ciphertext.
+`backup` writes `dev-backup-<timestamp>.tar.age` — git bundles of the meta-repo +
+each `ops/<repo>` (including `ops/infra`), age-encrypted to your public key.
+Destination: `$DEV_BACKUP_DIR` if set, else `backup/`; `restore` looks in the
+same place.
+
+**Off-site**: sync apps (Proton Drive, OneDrive, …) can only watch *local*
+folders — a WSL path is a network drive to Windows and can't be synced. So flip
+the direction: write snapshots straight *into* the app's synced folder. The
+archive is ciphertext, so the provider only ever sees ciphertext:
+```sh
+# in ~/.bashrc (or per-run with --backup-dir)
+export DEV_BACKUP_DIR="/mnt/c/Proton Drive/My files/backups/dev-snapshots"
+```
 
 > Live service state (the Forgejo DB, container volumes) is **not** in these bundles.
 > It's dumped separately by `ops/infra` (see `ops/infra/RESTORE.md`). Rule of thumb:

@@ -2,6 +2,7 @@
 # restore.sh — decrypt a backup/*.tar.age archive and extract to staging.
 #   ./restore.sh --dry-run
 #   ./restore.sh --yes [--archive FILE] [--backup-dir DIR]
+# Looks in $DEV_BACKUP_DIR if set, else <repo>/backup (same default as backup.sh).
 
 DRY_RUN=0
 ASSUME_YES=0
@@ -71,7 +72,7 @@ invoke_restore() {
     done
 
     local root; root="$(dev_root)"
-    [[ -n "$backup_dir" ]] || backup_dir="$root/backup"
+    [[ -n "$backup_dir" ]] || backup_dir="${DEV_BACKUP_DIR:-$root/backup}"
     [[ -n "$archive" ]] || archive="$(get_latest_archive "$backup_dir")"
     if [[ -z "$archive" ]]; then
         err "No backups found in $backup_dir. Nothing to restore."
