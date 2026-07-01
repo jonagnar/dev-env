@@ -12,6 +12,7 @@ keys.txt
 .config/sops/.sops.yaml
 
 # gitignored holding folders (keep the folder, drop the contents)
+infra/*
 ops/*
 !ops/.gitkeep
 tools/bin/*
