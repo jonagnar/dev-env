@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# tests/bash/backup_test.sh — mirrors tests/backup.Tests.ps1
+# tests/bash/backup_test.sh — unit tests for scripts/backup.sh
 SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SELF_DIR/helpers.sh"
 source "$SELF_DIR/../../scripts/backup.sh"

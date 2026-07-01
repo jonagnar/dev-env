@@ -1,5 +1,5 @@
 # scripts/lib/common.sh — shared contract dot-sourced by every verb.
-# Mirrors scripts/lib/common.ps1. Callers set DRY_RUN / ASSUME_YES before
+# Callers set DRY_RUN / ASSUME_YES before
 # invoking the helpers (defaults below cover tests). This file is meant to be
 # *sourced*; it deliberately does NOT enable `set -e` so a failing helper does
 # not kill the sourcing test harness — entrypoints set their own strict mode.
@@ -14,7 +14,7 @@ warn()  { printf 'WARN: %s\n' "$*" >&2; }
 err()   { printf 'ERROR: %s\n' "$*" >&2; }
 phase() { printf '\n== %s ==\n' "$*"; }
 
-# ---- run_native: the mockable seam (mirror Invoke-Native) ----
+# ---- run_native: the mockable seam (tests stub this) ----
 # Runs "$@"; on non-zero exit prints an error and returns that status.
 run_native() {
     "$@"
@@ -26,7 +26,7 @@ run_native() {
     return 0
 }
 
-# ---- step: dry-run-aware runner (mirror Invoke-Step) ----
+# ---- step: dry-run-aware runner ----
 # Usage: step "<name>" cmd arg...
 # Under DRY_RUN it prints the would-message and returns 0 without running.
 step() {
@@ -46,7 +46,7 @@ step_always() {
     "$@"
 }
 
-# ---- confirm (mirror Confirm-Action) ----
+# ---- confirm ----
 # Returns 0 (yes) if ASSUME_YES; under DRY_RUN prints would-prompt and returns 1;
 # otherwise reads a line and returns 0 on y/yes.
 confirm() {
@@ -73,7 +73,7 @@ age_key_path() {
     printf '%s/.config/sops/age/keys.txt\n' "$HOME"
 }
 
-# ---- checklist (mirror Reset/Add/Write-CheckSummary) ----
+# ---- checklist ----
 # Each check: name + ok status (0 = ok/pass, non-zero = fail) + optional detail.
 declare -a CHECK_NAMES=()
 declare -a CHECK_OK=()

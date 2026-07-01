@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# tests/bash/common_test.sh — mirrors tests/common.Tests.ps1
+# tests/bash/common_test.sh — unit tests for scripts/lib/common.sh
 SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=tests/bash/helpers.sh
 source "$SELF_DIR/helpers.sh"

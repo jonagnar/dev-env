@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# tests/bash/update_test.sh — mirrors tests/update.Tests.ps1
+# tests/bash/update_test.sh — unit tests for scripts/update.sh
 SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SELF_DIR/helpers.sh"
 source "$SELF_DIR/../../scripts/update.sh"

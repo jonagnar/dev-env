@@ -3,8 +3,8 @@
 This is a self-contained dev-environment meta-repo. One clone = the whole context.
 
 ## Layout
-- `scripts/` — the tool. Five verbs (`init`, `verify`, `update`, `backup`, `restore`),
-  each a `.ps1` (Windows) + `.sh` (Linux/WSL) port, sharing `scripts/lib/common.*`.
+- `scripts/` — the tool. Five verbs (`init`, `verify`, `update`, `backup`, `restore`)
+  as `.sh` (Linux/WSL), sharing `scripts/lib/common.sh`.
 - `ops/` — your cloned repos (gitignored): projects plus `ops/notes` (Obsidian vault),
   `ops/resources` (shared SDD assets + render tools), and `ops/infra` — homelab
   infra-as-code (`WAAAGH/infra`): compose stacks + `*.env.sops` secrets; live Docker
@@ -17,5 +17,5 @@ This is a self-contained dev-environment meta-repo. One clone = the whole contex
 ## Rules
 - Secrets live in `*.env.sops` (ciphertext) per project; never commit plaintext.
 - Add a global tool with `mise use -g <tool>` — keep `.config/mise/core.toml` minimal.
-- Every script supports `--help` and `-WhatIf`/`--dry-run`; destructive verbs prompt unless `-Yes`.
-- Run `scripts/verify.ps1` to confirm machine health.
+- Every script supports `--help` and `--dry-run`; destructive verbs prompt unless `--yes`.
+- Run `scripts/verify.sh` to confirm machine health.

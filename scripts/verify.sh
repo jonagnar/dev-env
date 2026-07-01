@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 # scripts/verify.sh — read-only health check of the dev-environment.
-# Linux port of scripts/verify.ps1.
 #   ./scripts/verify.sh            # run checks (exit 0 = all ok, 1 = failure)
 #   ./scripts/verify.sh --help
 source "$(dirname "${BASH_SOURCE[0]}")/lib/common.sh"

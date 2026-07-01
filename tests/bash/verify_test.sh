@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# tests/bash/verify_test.sh — mirrors tests/verify.Tests.ps1
+# tests/bash/verify_test.sh — unit tests for scripts/verify.sh
 SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SELF_DIR/helpers.sh"
 source "$SELF_DIR/../../scripts/verify.sh"

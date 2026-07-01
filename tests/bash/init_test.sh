@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# tests/bash/init_test.sh — mirrors tests/init.Tests.ps1 (Linux substitutions)
+# tests/bash/init_test.sh — unit tests for scripts/init.sh
 SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SELF_DIR/helpers.sh"
 source "$SELF_DIR/../../scripts/init.sh"

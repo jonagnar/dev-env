@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 # scripts/backup.sh — produce an age-encrypted snapshot of all repos into backups/.
-# Linux port of scripts/backup.ps1.
 #   ./scripts/backup.sh --dry-run
 #   ./scripts/backup.sh --yes [--backup-dir DIR]
 source "$(dirname "${BASH_SOURCE[0]}")/lib/common.sh"

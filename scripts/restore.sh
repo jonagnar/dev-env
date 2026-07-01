@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 # scripts/restore.sh — decrypt a backups/*.tar.age archive and extract to staging.
-# Linux port of scripts/restore.ps1.
 #   ./scripts/restore.sh --dry-run
 #   ./scripts/restore.sh --yes [--archive FILE] [--backup-dir DIR]
 source "$(dirname "${BASH_SOURCE[0]}")/lib/common.sh"

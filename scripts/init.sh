@@ -1,15 +1,14 @@
 #!/usr/bin/env bash
 # scripts/init.sh — provision or refresh this machine for the dev-environment.
-# Linux port of scripts/init.ps1.
 #   ./scripts/init.sh --dry-run    # preview
 #   ./scripts/init.sh --yes        # provision non-interactively
 #
-# Linux substitutions vs init.ps1:
+# Notes:
 #   * No root required. Preflight only warns (git missing / no network); under
 #     --dry-run warnings never abort.
-#   * scoop install git mise  -> ensure mise via `curl https://mise.run | sh`
-#     (user-scope ~/.local/bin); git is only warned about (no auto-sudo).
-#   * Register-ScheduledTask   -> systemd --user timer (graceful skip if absent).
+#   * mise is bootstrapped via `curl https://mise.run | sh` (user-scope
+#     ~/.local/bin); git is only warned about (no auto-sudo).
+#   * Scheduling uses a systemd --user timer (graceful skip if absent).
 source "$(dirname "${BASH_SOURCE[0]}")/lib/common.sh"
 source "$(dirname "${BASH_SOURCE[0]}")/verify.sh"   # provides invoke_verify
 

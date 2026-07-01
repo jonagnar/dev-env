@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # scripts/update.sh — pull the meta-repo, reconcile tools to the core config,
-# re-apply host config. Linux port of scripts/update.ps1.
+# re-apply host config.
 #   ./scripts/update.sh --dry-run
 #   ./scripts/update.sh --yes
-# On Linux there is no scoop; tool reconciliation is mise-only.
+# Tool reconciliation is mise-only.
 source "$(dirname "${BASH_SOURCE[0]}")/lib/common.sh"
 source "$(dirname "${BASH_SOURCE[0]}")/verify.sh"   # provides invoke_verify
 
