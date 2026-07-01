@@ -97,6 +97,18 @@ _chezmoi_apply() {
     DEV_ROOT="$root" run_native chezmoi init --apply --source "$root/.config/chezmoi"
 }
 
+# Hook ~/.config/dev/shell-init.sh into ~/.bashrc with ONE appended line.
+# Never rewrites .bashrc — append-if-missing only, so user config is untouched.
+_hook_bashrc() {
+    local hook='[ -f "$HOME/.config/dev/shell-init.sh" ] && . "$HOME/.config/dev/shell-init.sh"'
+    local rc="$HOME/.bashrc"
+    if [[ -f "$rc" ]] && grep -qF 'config/dev/shell-init.sh' "$rc"; then
+        info "shell-init hook already in ~/.bashrc"
+        return 0
+    fi
+    printf '\n# dev meta-repo shell init (installed by install.sh)\n%s\n' "$hook" >> "$rc"
+}
+
 invoke_install() {
     parse_common_flags "$@"
     local root; root="$(dev_root)"
@@ -131,6 +143,7 @@ invoke_install() {
 
     phase "Phase 3 — Host config"
     step "chezmoi init --apply" _chezmoi_apply "$root" || return 1
+    step "hook shell-init into ~/.bashrc (append-only)" _hook_bashrc || return 1
 
     phase "Phase 4 — Secrets"
     step "generate work age key + write recipient" \

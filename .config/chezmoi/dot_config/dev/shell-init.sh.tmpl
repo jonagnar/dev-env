@@ -1,5 +1,6 @@
-# .config/chezmoi/dot_bashrc.tmpl
-# Managed by chezmoi — do not edit directly; edit the template.
+# ~/.config/dev/shell-init.sh — managed by chezmoi; edit the template in
+# <dev>/.config/chezmoi/. Sourced from ~/.bashrc by a one-line hook that
+# install.sh appends (your .bashrc stays yours — never overwritten).
 export DEV_ROOT="{{ .devRoot }}"
 export MISE_GLOBAL_CONFIG_FILE="$DEV_ROOT/.config/mise/core.toml"
 export SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"

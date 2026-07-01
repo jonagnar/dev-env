@@ -9,6 +9,10 @@
     ff = only
 [core]
     excludesFile = ~/.config/git/ignore
+# tea (Forgejo CLI) supplies HTTP credentials for the local Forgejo.
+[credential "http://localhost:3000"]
+    helper =
+    helper = !tea login helper
 [alias]
     st = status -sb
     co = checkout
