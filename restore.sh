@@ -7,6 +7,10 @@
 DRY_RUN=0
 ASSUME_YES=0
 
+# age comes from mise; outside an interactive shell (cron, plain bash -c)
+# mise isn't activated — fall back to its shims.
+command -v age >/dev/null 2>&1 || export PATH="$HOME/.local/share/mise/shims:$PATH"
+
 info()  { printf '%s\n' "$*"; }
 warn()  { printf 'WARN: %s\n' "$*" >&2; }
 err()   { printf 'ERROR: %s\n' "$*" >&2; }
