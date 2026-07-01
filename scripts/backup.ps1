@@ -14,17 +14,6 @@ function Get-DevRepos {
             if (Test-Path (Join-Path $_.FullName '.git')) { $repos += $_.FullName }
         }
     }
-    # infra/: either the Infra clone itself, or a container of infra repos.
-    $infraDir = Join-Path $Root 'infra'
-    if (Test-Path $infraDir) {
-        if (Test-Path (Join-Path $infraDir '.git')) {
-            $repos += $infraDir
-        } else {
-            Get-ChildItem $infraDir -Directory -ErrorAction SilentlyContinue | ForEach-Object {
-                if (Test-Path (Join-Path $_.FullName '.git')) { $repos += $_.FullName }
-            }
-        }
-    }
     return $repos
 }
 

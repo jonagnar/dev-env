@@ -34,7 +34,7 @@ invoke_verify() {
     else add_check "age key present" 1 "$key_path missing — run init"; fi
 
     local d
-    for d in ops tools/bin backups infra; do
+    for d in ops tools/bin backups; do
         if path_exists "$root/$d"; then add_check "folder: $d" 0
         else add_check "folder: $d" 1 "missing"; fi
     done
