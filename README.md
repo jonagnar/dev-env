@@ -35,6 +35,22 @@ If you've ever inherited a laptop with tools installed by hand, secrets in a
 2. Preview: `./install.sh --dry-run`  → then `./install.sh`
 3. Open a new shell — mise + secrets auto-load.
 
+## Tech stack
+
+| Tool | Role here |
+|---|---|
+| [bash](https://www.gnu.org/software/bash/) | the only language — three standalone scripts, no shared lib, no build step |
+| [mise](https://mise.jdx.dev/) | installs the toolchain, activates per-project env, decrypts sops secrets on `cd` |
+| [sops](https://github.com/getsops/sops) | encrypts secrets file-by-file; ciphertext is committed, plaintext never is |
+| [age](https://age-encryption.org/) | the encryption under sops *and* the backup archives — one key for everything |
+| [chezmoi](https://www.chezmoi.io/) | renders host config templates (shell init, git config) into `$HOME` |
+| [gitleaks](https://github.com/gitleaks/gitleaks) | pre-commit hook in every repo — last line of defense against committing secrets |
+| [git bundle](https://git-scm.com/docs/git-bundle) + tar | the backup format: full-history, clonable, single-file per repo |
+| winget / Git Bash | Windows only — winget bootstraps mise; Git Bash runs the same scripts unmodified |
+
+Everything except bash and git is installed by `install.sh` via mise — nothing to
+set up by hand.
+
 ## Layout — every file, and what it does
 
 ```
