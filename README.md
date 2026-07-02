@@ -27,7 +27,7 @@ dev/                                ← the meta-repo: clone it, run install.sh
 │  ├─ sops/.sops.yaml.tmpl          seed for this machine's age recipient
 │  │                                (rendered ONCE by install — added recipients survive)
 │  └─ chezmoi/                      host-config templates → applied to $HOME
-│     ├─ .chezmoi.toml.tmpl         chezmoi config: source dir + git identity data
+│     ├─ .chezmoi.toml.tmpl         chezmoi config: records the source dir
 │     └─ dot_config/
 │        ├─ dev/shell-init.sh.tmpl  → ~/.config/dev/shell-init.sh (env vars + mise activation)
 │        ├─ dev/gitconfig.tmpl      → ~/.config/dev/gitconfig (aliases, hooks wiring)
@@ -36,7 +36,8 @@ dev/                                ← the meta-repo: clone it, run install.sh
 │           └─ template/hooks/…pre-commit  → gitleaks guard, lands in every new/cloned repo
 │
 ├─ README.md · AGENTS.md · CLAUDE.md    this file · instructions for AI agents · pointer
-└─ .gitignore · .gitattributes          src/* & restore-*/ ignored · LF endings enforced
+├─ .gitignore · .gitattributes          src/* & restore-*/ ignored · LF endings enforced
+└─ LICENSE                              MIT
 ```
 
 All three scripts support `--help` and `--dry-run`; `restore` prompts unless `--yes`.
@@ -143,8 +144,9 @@ the direction: answer install's question with a folder *inside* the app's synced
 tree (e.g. `/mnt/c/Proton Drive/My files/backups/dev-snapshots`).
 
 > Live service state (databases, container volumes) is **not** in these bundles —
-> dump it separately (see `src/infra/RESTORE.md` for the Forgejo example). Rule of
-> thumb: git bundles cover code + config; service dumps cover live data.
+> dump it with the service's own tooling (e.g. a nightly `forgejo dump` if you
+> self-host git). Rule of thumb: git bundles cover code + config; service dumps
+> cover live data.
 
 ## Disaster recovery
 1. Install git + age; clone this repo.

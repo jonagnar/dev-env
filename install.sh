@@ -140,6 +140,20 @@ _hook_gitconfig() {
     run_native git config --global --add include.path "~/.config/dev/gitconfig"
 }
 
+# Git identity is personal — this repo ships none. Warn if it's missing.
+_check_git_identity() {
+    local n e
+    n="$(git config user.name 2>/dev/null || true)"
+    e="$(git config user.email 2>/dev/null || true)"
+    if [[ -z "$n" || -z "$e" ]]; then
+        warn "git identity not set — commits will fail until you run:"
+        warn "  git config --global user.name  'Your Name'"
+        warn "  git config --global user.email 'you@example.com'"
+    else
+        info "git identity: $n <$e> (yours, untouched)"
+    fi
+}
+
 # Ask once where backups should go; persist to ~/.config/dev/backup-dir.
 # backup.sh/restore.sh read it (overridable via $DEV_BACKUP_DIR / --backup-dir).
 # Non-interactive (--yes / no tty): defaults to ~/backups without asking.
@@ -215,6 +229,7 @@ invoke_install() {
     step "chezmoi init --apply" _chezmoi_apply "$root" || return 1
     step "hook shell-init into ~/.bashrc (append-only)" _hook_bashrc || return 1
     step "hook gitconfig include (append-only)" _hook_gitconfig || return 1
+    step "check git identity (yours, never ours)" _check_git_identity || return 1
 
     phase "Phase 4 — Secrets"
     step "generate work age key + write recipient" \

@@ -1,10 +1,7 @@
 # ~/.config/dev/gitconfig — managed by chezmoi; pulled into your ~/.gitconfig
-# via ONE [include] line that install.sh appends. Your own .gitconfig (identity
-# overrides, safe.directory, editor, …) is never rewritten; anything you set
-# there after the include line wins over these values.
-[user]
-    name = {{ .gitName }}
-    email = {{ .gitEmail }}
+# via ONE [include] line that install.sh appends. Your own .gitconfig (identity,
+# credential helpers, safe.directory, editor, …) is never rewritten, and this
+# file deliberately carries no [user] — your identity stays yours.
 [init]
     defaultBranch = main
     templateDir = ~/.config/git/template
@@ -12,10 +9,6 @@
     ff = only
 [core]
     excludesFile = ~/.config/git/ignore
-# tea (Forgejo CLI) supplies HTTP credentials for the local Forgejo.
-[credential "http://localhost:3000"]
-    helper =
-    helper = !tea login helper
 [alias]
     st = status -sb
     co = checkout
