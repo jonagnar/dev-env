@@ -36,6 +36,13 @@ step() {
 dev_root()     { cd "$(dirname "${BASH_SOURCE[0]}")" && pwd; }
 age_key_path() { printf '%s/.config/sops/age/keys.txt\n' "$HOME"; }
 
+# Native-tool-friendly path: MSYS converts command ARGS for .exe tools but NOT
+# env vars, so anything exported for mise.exe/chezmoi.exe must be C:/-style on
+# Git Bash. No-op on Linux/WSL.
+to_native() {
+    if command -v cygpath >/dev/null 2>&1; then cygpath -m "$1"; else printf '%s\n' "$1"; fi
+}
+
 parse_common_flags() {
     REST_ARGS=()
     while [[ $# -gt 0 ]]; do
@@ -57,10 +64,26 @@ network_ok() {
 }
 ensure_dir() { mkdir -p "$1"; }
 
-# Bootstrap mise user-scope (curl https://mise.run | sh -> ~/.local/bin).
+# Bootstrap mise user-scope.
+#   Linux/WSL:          curl https://mise.run | sh   -> ~/.local/bin
+#   Windows (Git Bash): winget install jdx.mise      -> WinGet Links dir
+# (mise.run's installer refuses MINGW — Windows uses the native build.)
 ensure_mise() {
-    run_native bash -c 'curl -fsSL https://mise.run | sh' || return 1
-    export PATH="$HOME/.local/bin:$PATH"
+    case "$(uname -s)" in
+        MINGW*|MSYS*|CYGWIN*)
+            # winget puts the exe alias in its Links dir, which only lands on
+            # PATH in NEW shells — check there before (re)installing.
+            local links; links="$(cygpath -u "$LOCALAPPDATA")/Microsoft/WinGet/Links"
+            if [[ ! -x "$links/mise.exe" ]]; then
+                run_native winget install -e --id jdx.mise --accept-source-agreements --accept-package-agreements || return 1
+            fi
+            export PATH="$links:$PATH"
+            ;;
+        *)
+            run_native bash -c 'curl -fsSL https://mise.run | sh' || return 1
+            export PATH="$HOME/.local/bin:$PATH"
+            ;;
+    esac
 }
 
 # Generate the work age key + render .sops.yaml from the template with the pubkey.
@@ -92,7 +115,7 @@ new_dev_age_key() {
 
 _mise_install() {
     local root="$1"
-    local cfg="$root/.config/mise/core.toml"
+    local cfg; cfg="$(to_native "$root/.config/mise/core.toml")"
     MISE_GLOBAL_CONFIG_FILE="$cfg" run_native mise trust "$cfg"
     MISE_GLOBAL_CONFIG_FILE="$cfg" run_native mise install
 }
@@ -103,7 +126,18 @@ _chezmoi_apply() {
     # managed target changed on disk since it last wrote it.
     local -a extra=()
     [[ "$ASSUME_YES" == "1" ]] && extra=(--force)
-    DEV_ROOT="$root" run_native chezmoi init --apply "${extra[@]}" --source "$root/.config/chezmoi"
+    DEV_ROOT="$(to_native "$root")" run_native chezmoi init --apply "${extra[@]}" --source "$root/.config/chezmoi"
+}
+
+# Wire the chezmoi-managed gitconfig into ~/.gitconfig with ONE include —
+# never rewrites the user's file (identity, safe.directory, editor survive;
+# anything they set after the include wins over ours).
+_hook_gitconfig() {
+    if git config --global --get-all include.path 2>/dev/null | grep -q 'config/dev/gitconfig'; then
+        info "gitconfig include already present"
+        return 0
+    fi
+    run_native git config --global --add include.path "~/.config/dev/gitconfig"
 }
 
 # Ask once where backups should go; persist to ~/.config/dev/backup-dir.
@@ -155,7 +189,7 @@ invoke_install() {
 
     phase "Phase 1 — Tools"
     if ! has_cmd mise; then
-        step "install mise (curl https://mise.run | sh)" ensure_mise || return 1
+        step "bootstrap mise (winget on Windows, mise.run elsewhere)" ensure_mise || return 1
     else
         info "mise already present."
     fi
@@ -163,7 +197,15 @@ invoke_install() {
     # Put the just-installed mise tools on PATH for the rest of THIS process —
     # chezmoi (Phase 3) and age-keygen (Phase 4) run before any new shell activates mise.
     if [[ "${DRY_RUN:-0}" -ne 1 ]] && command -v mise >/dev/null 2>&1; then
-        eval "$(MISE_GLOBAL_CONFIG_FILE="$root/.config/mise/core.toml" mise env -s bash 2>/dev/null)" || true
+        # every later mise/shim invocation needs to know about the core config
+        export MISE_GLOBAL_CONFIG_FILE="$(to_native "$root/.config/mise/core.toml")"
+        if command -v cygpath >/dev/null 2>&1; then
+            # `mise env` emits a Windows-style PATH that clobbers the MSYS one
+            # (goodbye /usr/bin) — put mise's shims on PATH instead.
+            export PATH="$(cygpath -u "$LOCALAPPDATA")/mise/shims:$PATH"
+        else
+            eval "$(mise env -s bash 2>/dev/null)" || true
+        fi
     fi
 
     phase "Phase 2 — Skeleton"
@@ -172,6 +214,7 @@ invoke_install() {
     phase "Phase 3 — Host config"
     step "chezmoi init --apply" _chezmoi_apply "$root" || return 1
     step "hook shell-init into ~/.bashrc (append-only)" _hook_bashrc || return 1
+    step "hook gitconfig include (append-only)" _hook_gitconfig || return 1
 
     phase "Phase 4 — Secrets"
     step "generate work age key + write recipient" \

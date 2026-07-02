@@ -1,4 +1,7 @@
-# Managed by chezmoi — edit this template, not ~/.gitconfig.
+# ~/.config/dev/gitconfig — managed by chezmoi; pulled into your ~/.gitconfig
+# via ONE [include] line that install.sh appends. Your own .gitconfig (identity
+# overrides, safe.directory, editor, …) is never rewritten; anything you set
+# there after the include line wins over these values.
 [user]
     name = {{ .gitName }}
     email = {{ .gitEmail }}

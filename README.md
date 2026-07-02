@@ -1,11 +1,12 @@
 # dev — meta-repo dev-environment
 
 A tiny, secret-free meta-repo that provisions a machine, manages sops+age secrets
-via mise, and produces encrypted backups. Clone it, run one script. Runs in
-WSL/Linux (bash).
+via mise, and produces encrypted backups. Clone it, run one script. Runs anywhere
+bash does: **WSL/Linux**, or **native Windows via Git Bash** (ships with Git —
+mise is bootstrapped through winget there).
 
 ## Quick start
-1. `git clone <repo> dev && cd dev`
+1. `git clone <repo> dev && cd dev`  *(on Windows: in a Git Bash shell)*
 2. Preview: `./install.sh --dry-run`  → then `./install.sh`
 3. Open a new shell — mise + secrets auto-load.
 

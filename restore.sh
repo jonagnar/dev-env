@@ -52,9 +52,19 @@ backup_dest() {
 # mise isn't activated and its shims can't pick a version without the repo's
 # core config. Wire both up if age isn't already resolvable.
 ensure_age() {
-    local root="$1"
-    export MISE_GLOBAL_CONFIG_FILE="${MISE_GLOBAL_CONFIG_FILE:-$root/.config/mise/core.toml}"
-    command -v age >/dev/null 2>&1 || export PATH="$HOME/.local/share/mise/shims:$PATH"
+    local root="$1" cfg="$root/.config/mise/core.toml"
+    if command -v cygpath >/dev/null 2>&1; then
+        # env vars for native mise.exe need C:/-style paths; PATH entries need
+        # MSYS-style ones — convert each accordingly. The shims delegate to
+        # mise itself, so the WinGet Links dir must be reachable too.
+        cfg="$(cygpath -m "$cfg")"
+        local la; la="$(cygpath -u "$LOCALAPPDATA")"
+        command -v mise >/dev/null 2>&1 || export PATH="$la/Microsoft/WinGet/Links:$PATH"
+        command -v age  >/dev/null 2>&1 || export PATH="$la/mise/shims:$PATH"
+    else
+        command -v age >/dev/null 2>&1 || export PATH="$HOME/.local/share/mise/shims:$PATH"
+    fi
+    export MISE_GLOBAL_CONFIG_FILE="${MISE_GLOBAL_CONFIG_FILE:-$cfg}"
 }
 
 parse_common_flags() {

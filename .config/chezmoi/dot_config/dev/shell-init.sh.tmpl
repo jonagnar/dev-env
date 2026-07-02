@@ -3,7 +3,12 @@
 # install.sh appends (your .bashrc stays yours — never overwritten).
 export DEV_ROOT="{{ .devRoot }}"
 export MISE_GLOBAL_CONFIG_FILE="$DEV_ROOT/.config/mise/core.toml"
-export SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
+# Native tools (sops.exe, mise.exe) need native-style paths on Windows/Git Bash.
+if command -v cygpath >/dev/null 2>&1; then
+  export SOPS_AGE_KEY_FILE="$(cygpath -m "$HOME/.config/sops/age/keys.txt")"
+else
+  export SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
+fi
 # Non-login shells (VS Code terminal, ssh <cmd>, plain bash) miss ~/.local/bin
 # because only .profile adds it — self-heal so mise activation never no-ops.
 if ! command -v mise >/dev/null 2>&1 && [ -x "$HOME/.local/bin/mise" ]; then
