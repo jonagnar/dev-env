@@ -13,6 +13,7 @@ keys.txt
 
 # gitignored holding folders (keep the folder, drop the contents)
 src/*
+!src/demo-api
 !src/.gitkeep
 # restore.sh staging dirs
 restore-*/

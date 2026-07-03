@@ -1,0 +1,3 @@
+# plaintext env files never get committed; sops ciphertext (secrets/*.env.json) does
+.env
+*.env
