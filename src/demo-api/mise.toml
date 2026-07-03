@@ -1,2 +1,8 @@
+# demo only: decrypt with the committed throwaway key (see demo.agekey).
+# Real projects omit [settings] — mise then uses your machine key
+# (~/.config/sops/age/keys.txt).
+[settings]
+sops.age_key_file = "{{config_root}}/demo.agekey"
+
 [env]
 _.file = "secrets/shared.env.json"

@@ -1,11 +1,9 @@
-# .config/sops/.sops.yaml — this machine's seed recipient file. `install`
-# renders it ONCE (with this machine's PUBLIC key) and never overwrites it.
-# Per-project secrets: copy the rendered file into the project repo as its
-# .sops.yaml (public keys only — safe to commit); teammates/CI append their
-# public keys there, comma-separated.
-# Covers both secret styles:
-#   *.env.{json,yaml,toml} — mise-native (decrypted in-memory on `cd`)
-#   *.env.sops             — dotenv-style, for compose stacks etc. (sops CLI)
+# demo-api recipient file. Unlike a real project — where you'd copy this
+# machine's rendered .config/sops/.sops.yaml (see README) — the demo encrypts
+# to the committed, intentionally-public keypair in ./demo.agekey so the
+# secrets decrypt for anyone who clones this repo, whatever key `install`
+# generated for them. Real projects: your machine key + teammates/CI appended,
+# comma-separated. Never commit a real private key.
 creation_rules:
   - path_regex: \.env(\.sops|\.(json|ya?ml|toml))$
-    age: "age1jw94whx08kfnu0ussphuem83dl74ke7cpyms8hxgw5rdrllaleqqcfc49v"
+    age: "age1ds0aqdn8hc4gtx63pa5g9qdptn74w4uh4zv48g7xrmfl4fjgqggq5ls9at"

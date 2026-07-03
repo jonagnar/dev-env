@@ -1,0 +1,9 @@
+# ⚠️  DEMO KEY — INTENTIONALLY PUBLIC. Do not reuse for anything real.
+# This throwaway age keypair is committed so the demo secrets in secrets/
+# decrypt out of the box for anyone who clones this repo. It protects
+# nothing: every value it encrypts is a fake placeholder.
+# Real projects use your machine key (~/.config/sops/age/keys.txt),
+# which `install` generates and which never leaves your machine.
+# created: 2026-07-03T08:40:42Z
+# public key: age1ds0aqdn8hc4gtx63pa5g9qdptn74w4uh4zv48g7xrmfl4fjgqggq5ls9at
+AGE-SECRET-KEY-1EZ89GHFVD4Y429869LMAYR60Z5FFTJVGG43SGVDMSXH7NEWNGC2Q0E0S85

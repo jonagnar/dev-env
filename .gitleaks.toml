@@ -1,0 +1,8 @@
+# The demo ships an intentionally-public throwaway age key so its encrypted
+# secrets decrypt for anyone who clones this repo — see src/demo-api/demo.agekey.
+# Everything else stays guarded by the default gitleaks rules.
+[extend]
+useDefault = true
+
+[allowlist]
+paths = ['''src/demo-api/demo\.agekey''']

@@ -110,6 +110,7 @@ A project wired for multi-tenant secrets looks like this:
 src/demo-api/
 ├─ .sops.yaml                    recipients: you · teammate · CI   (public keys — commit it)
 ├─ .env.example                  variable NAMES only (plaintext, safe, committed)
+├─ demo.agekey                   ⚠️ demo only: throwaway key, committed so it runs on clone
 ├─ mise.toml                     [env] _.file = "secrets/shared.env.json"
 ├─ mise.acme.toml                [env] _.file = "secrets/acme.env.json"   (MISE_ENV=acme)
 ├─ mise.globex.toml              [env] _.file = "secrets/globex.env.json" (MISE_ENV=globex)
@@ -121,6 +122,13 @@ src/demo-api/
 $ cd src/demo-api                → mise decrypts shared.env.json → vars in your shell
 $ MISE_ENV=acme  <same cd>       → + acme.env.json on top — different tenant, zero code change
 ```
+
+The demo is tracked in this repo (a `.gitignore` exception — everything else in
+`src/` stays untracked) and encrypts to its own **committed, intentionally-public
+keypair** (`demo.agekey`, wired up via `sops.age_key_file` in its `mise.toml`),
+so it works on a fresh clone regardless of the machine key `install` generated
+for you. Real projects never do this — their `.sops.yaml` lists real recipients
+and private keys stay in `~/.config/sops/age/keys.txt`.
 
 **Per project, once** — recipient file + mise wiring:
 ```sh
